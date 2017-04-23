@@ -1,7 +1,16 @@
 package com.softwaremachine.sanctus.quickmed;
 
+import android.Manifest;
+import android.support.annotation.RequiresPermission;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+
+import android.content.pm.PackageManager;
+import android.content.Context;
+import android.content.ContextWrapper;
+
+import android.location.LocationManager;
+import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,10 +46,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Location here = null;
+        Context myContext = this.getApplicationContext();
+        LocationManager locman = (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if(this.getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, myContext.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+            here = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            LatLng myLoc = new LatLng(here.getLatitude(), here.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(myLoc).title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
+        }
     }
 }
