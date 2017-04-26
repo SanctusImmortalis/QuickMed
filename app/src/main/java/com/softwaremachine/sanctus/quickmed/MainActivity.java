@@ -46,15 +46,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Location here = null;
         Context myContext = this.getApplicationContext();
-        LocationManager locman = (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
-
-        if(this.getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, myContext.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-            here = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            LatLng myLoc = new LatLng(here.getLatitude(), here.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(myLoc).title("You are here"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
+        if(this.getPackageManager().checkPermission(Manifest.permission.INTERNET, myContext.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+            if (this.getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, myContext.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                Location here = null;
+                LocationManager locman = (LocationManager) myContext.getSystemService(Context.LOCATION_SERVICE);
+                here = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                LatLng myLoc = new LatLng(here.getLatitude(), here.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(myLoc).title("You are here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
+            }
         }
     }
 }
